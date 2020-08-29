@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FPS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  Lorem ipsum, dolor sit amet consectetur, adipisicing elit. Atque itaque nam ex corporis eos aperiam amet iste est magnam officia.
+
+
+  <script>
+    
+    class FPS {
+      constructor() {
+        this.width = 150
+        this.height = 65
+        this.canvas = document.createElement('canvas')
+        this.ctx = this.canvas.getContext('2d')
+        
+        this.canvas.width = this.width 
+        this.canvas.height = this.height
+        this.canvas.classList.add('fps')
+        this.ctx.font = "bold 20px Arial"
+        this.frame = 0
+        this.startTime = 0
+        this.allFPS = []
+
+        this.hidden = true
+        this.playing = false
+        
+        document.body.appendChild(this.canvas)
+      }
+      playpause() {
+        this.playing = this.playing  ? false : true
+      }
+      toggle() {
+        this.hidden = this.hidden ? false : true
+        if (!this.hidden) {
+          this.loop()
+          this.canvas.classList.add('is-visible')
+        } else {
+          this.canvas.classList.remove('is-visible')
+        }
+      }
+      loop() {
+        if (this.hidden) return false
+
+          window.requestAnimationFrame(() => {
+            this.draw()
+            this.loop()
+          })
+      }
+      add(x) {
+        this.allFPS.unshift(x)
+        this.allFPS = this.allFPS.slice(0, this.width)
+      }
+      draw() {
+        let currentFPS = this.getFPS()
+        this.add(currentFPS)
+
+        this.ctx.clearRect(0, 0,  this.width, this.height)
+        for (let i = 0; i <= this.width; i++) {
+          this.ctx.fillStyle = '#000'
+          this.ctx.fillRect(i, 0, 1, 5 + 60 - this.allFPS[i])
+          this.ctx.fillStyle = "#fff"
+          this.ctx.fillRect(i, 5 + 60 - this.allFPS[i], 1, 1)
+        }
+        // Add some shadow
+        this.ctx.fillStyle = '#000'
+        this.ctx.fillText(currentFPS + ' fps', 20, 40)
+        // Actual Text
+        this.ctx.fillStyle = "#fff"
+        this.ctx.fillText(currentFPS + ' fps', 21, 41)
+      }
+      getFPS() {
+        this.frame++
+        let d = Date.now()
+        this.currentTime = (d - this.startTime) / 1000
+        let result = Math.floor(this.frame / this.currentTime)
+        if (this.currentTime > 1) {
+          this.startTime = Date.now()
+          this.frame = 0
+        }
+        return result
+      }
+    }
+
+    let fps = new FPS
+    fps.toggle()
+  </script>
+
+  
+<!--   <script src="main.js"></script> -->
+</body>
+</html>
